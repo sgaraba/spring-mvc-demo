@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ro" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Incarcare fisiere</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            margin: 2.5rem;
+            background: #f6f4f1;
+            color: #1f1f1f;
+        }
+        .panel {
+            max-width: 520px;
+            background: #ffffff;
+            padding: 1.75rem;
+            border-radius: 16px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+        }
+        h1 {
+            margin-top: 0;
+            font-size: 1.6rem;
+        }
+        form {
+            display: grid;
+            gap: 1rem;
+        }
+        input[type="file"] {
+            border: 1px solid #cfc9c2;
+            padding: 0.6rem;
+            border-radius: 10px;
+            background: #fffdfa;
+        }
+        button {
+            border: none;
+            padding: 0.7rem 1.2rem;
+            border-radius: 999px;
+            background: #2d5bff;
+            color: #ffffff;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .message {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            font-size: 0.95rem;
+        }
+        .error {
+            background: #ffe6e1;
+            color: #a6382a;
+        }
+        .success {
+            background: #e6f5e6;
+            color: #1f5f2d;
+        }
+        .details {
+            margin-top: 0.75rem;
+            font-size: 0.9rem;
+        }
+        .details div {
+            margin-bottom: 0.35rem;
+        }
+    </style>
+</head>
+<body>
+<div class="panel">
+    <h1>Incarcare fisiere</h1>
+    <form method="post" enctype="multipart/form-data">
+        <input type="file" name="file" required>
+        <button type="submit">Incarca fisier</button>
+    </form>
+
+    <div th:if="${error}" class="message error" th:text="${error}"></div>
+
+    <div th:if="${upload}" class="message success">
+        Fisierul a fost incarcat cu succes.
+        <div class="details">
+            <div><strong>Original:</strong> <span th:text="${upload.originalName}"></span></div>
+            <div><strong>Salvat ca:</strong> <span th:text="${upload.storedName}"></span></div>
+            <div><strong>Dimensiune:</strong> <span th:text="${upload.sizeBytes}"></span> bytes</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
