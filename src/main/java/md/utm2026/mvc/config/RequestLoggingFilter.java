@@ -1,4 +1,4 @@
-package md.utm2026.mvc.web;
+package md.utm2026.mvc.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
