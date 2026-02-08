@@ -5,9 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import md.utm2026.mvc.service.DeferredRegistry;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -25,6 +28,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class TaskResource {
 
     private static final Logger logger = LoggerFactory.getLogger(TaskResource.class);
+    private final DeferredRegistry deferredRegistry;
+
+    public TaskResource(DeferredRegistry deferredRegistry) {
+        this.deferredRegistry = deferredRegistry;
+    }
 
     @GetMapping("/v1")
     public String testV1() {
@@ -54,9 +62,32 @@ public class TaskResource {
         };
     }
 
+    @GetMapping("/deferred/{id}")
+    public DeferredResult<Map<String, Object>> getDeferred(
+            @PathVariable String id,
+            @RequestParam(defaultValue = "10000") long timeoutMs
+    ) {
+        return deferredRegistry.register(id, timeoutMs);
+    }
+
+    @GetMapping("/deferred/{id}/complete")
+    public Map<String, Object> completeDeferred(
+            @PathVariable String id,
+            @RequestParam(defaultValue = "ok") String message
+    ) {
+        Map<String, Object> payload = Map.of(
+                "message", message,
+                "timestamp", Instant.now().toString()
+        );
+        boolean completed = deferredRegistry.complete(id, payload);
+        return Map.of("completed", completed);
+    }
+
     @GetMapping("/sse")
-    public SseEmitter streamUpdates(@RequestParam(defaultValue = "1000") long intervalMs,
-                                    @RequestParam(required = false) Integer maxEvents) {
+    public SseEmitter streamUpdates(
+            @RequestParam(defaultValue = "1000") long intervalMs,
+            @RequestParam(required = false) Integer maxEvents
+    ) {
         SseEmitter emitter = new SseEmitter(0L);
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
         AtomicInteger sent = new AtomicInteger(0);
