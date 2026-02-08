@@ -13,6 +13,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -38,6 +39,19 @@ public class TaskResource {
     @GetMapping("/by-date")
     public String getByDate(@RequestParam LocalDate date) {
         return "Task date: " + date;
+    }
+
+    @GetMapping("/callable")
+    public Callable<Map<String, Object>> getCallable(@RequestParam(defaultValue = "2000") long delayMs) {
+        return () -> {
+            logger.info("Run callable ...");
+            Thread.sleep(delayMs);
+            return Map.of(
+                    "message", "Callable response",
+                    "timestamp", Instant.now().toString(),
+                    "delayMs", delayMs
+            );
+        };
     }
 
     @GetMapping("/sse")
