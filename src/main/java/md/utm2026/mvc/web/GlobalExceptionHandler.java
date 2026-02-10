@@ -1,6 +1,7 @@
 package md.utm2026.mvc.web;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import md.utm2026.mvc.exception.ApiError;
 import md.utm2026.mvc.exception.UserNotFoundException;
 import org.slf4j.Logger;
@@ -33,7 +34,20 @@ public class GlobalExceptionHandler {
                 .stream()
                 .map(this::toViolation)
                 .toList();
-        return build(HttpStatus.BAD_REQUEST, "Validation failed", req.getRequestURI(), v);
+        return build(HttpStatus.BAD_REQUEST, "Method argument validation failed", req.getRequestURI(), v);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ApiError> constraintViolation(ConstraintViolationException ex, HttpServletRequest req) {
+        logger.warn("Constraint violation: {}", ex.getMessage());
+        List<ApiError.FieldViolation> v = ex.getConstraintViolations()
+                .stream()
+                .map(violation -> new ApiError.FieldViolation(
+                        violation.getPropertyPath().toString(),
+                        violation.getMessage()
+                ))
+                .toList();
+        return build(HttpStatus.BAD_REQUEST, "Constraint validation failed", req.getRequestURI(), v);
     }
 
     @ExceptionHandler(Exception.class)
@@ -51,4 +65,3 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(body);
     }
 }
-
