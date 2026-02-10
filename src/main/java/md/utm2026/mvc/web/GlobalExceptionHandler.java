@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.Instant;
 import java.util.List;
@@ -23,6 +24,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ApiError> notFound(UserNotFoundException ex, HttpServletRequest req) {
         logger.warn("User not found: {}", ex.getMessage());
+        return build(HttpStatus.NOT_FOUND, ex.getMessage(), req.getRequestURI(), List.of());
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiError> noResourceFoundException(NoResourceFoundException ex, HttpServletRequest req) {
+        logger.warn("No Resource FoundException found: {}", ex.getMessage());
         return build(HttpStatus.NOT_FOUND, ex.getMessage(), req.getRequestURI(), List.of());
     }
 

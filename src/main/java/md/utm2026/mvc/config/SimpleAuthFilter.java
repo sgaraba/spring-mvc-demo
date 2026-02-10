@@ -30,7 +30,7 @@ public class SimpleAuthFilter extends OncePerRequestFilter {
         if (path.startsWith("/api/")) {
             return false;
         }
-        return !("/upload".equals(path) && "POST".equalsIgnoreCase(request.getMethod()));
+        return "/upload".equals(path);
     }
 
     @Override
