@@ -1,4 +1,10 @@
 package md.utm2026.mvc.service.dto;
 
-public record RequestUserDto(String username, Integer age) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public record RequestUserDto(
+        @NotBlank String username,
+        @NotNull Integer age
+) {
 }
