@@ -3,6 +3,8 @@ package md.utm2026.mvc.web;
 import jakarta.validation.Valid;
 import md.utm2026.mvc.exception.UserNotFoundException;
 import md.utm2026.mvc.service.dto.RequestUserDto;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +33,10 @@ public class UserResource {
         if (userId != 1) {
             throw new UserNotFoundException(userId);
         }
-        return ResponseEntity.ok(new RequestUserDto("Petru", 55));
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-TEST", "Test123");
+        return new ResponseEntity<>(new RequestUserDto("Petru", 55), headers, HttpStatus.OK);
+        //ResponseEntity.ok(new RequestUserDto("Petru", 55));
     }
 
     @DeleteMapping("/{userId}")

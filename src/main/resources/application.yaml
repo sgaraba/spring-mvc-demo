@@ -3,7 +3,7 @@ logging:
   level:
     root: info
     md.utm2026.mvc: debug
-    org.springframework.web: debug
+    #org.springframework.web: debug
 
 
 
@@ -21,3 +21,5 @@ server:
 app:
   upload-dir: uploads
   api-key: 123456
+  api-key-header: X-AUTH-KEY
+

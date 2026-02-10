@@ -16,6 +16,7 @@ public class RequestLoggingInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         long start = System.currentTimeMillis();
         request.setAttribute("requestStartMs", start);
+        response.addHeader("X-Interceptor-H", "Inte2345");
         logger.info("IN  {} {}", request.getMethod(), request.getRequestURI());
         return true;
     }
