@@ -2,6 +2,7 @@ package md.utm2026.mvc.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,6 +66,12 @@ public class TaskResource {
         };
     }
 
+    @GetMapping("/async")
+    public ResponseEntity<Void> getAsync() throws InterruptedException {
+        deferredRegistry.test();
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/deferred/{id}")
     public DeferredResult<Map<String, Object>> getDeferred(
             @PathVariable String id,
@@ -123,6 +130,7 @@ public class TaskResource {
                         .name("ping")
                         .data(Map.of("timestamp", Instant.now().toString())));
             } catch (Exception ex) {
+                ex.printStackTrace();
                 emitter.completeWithError(ex);
             }
         }, 15_000L, 15_000L, TimeUnit.MILLISECONDS);

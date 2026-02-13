@@ -1,5 +1,9 @@
 package md.utm2026.mvc.service;
 
+import md.utm2026.mvc.web.TaskResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.async.DeferredResult;
 
@@ -9,6 +13,8 @@ import java.util.concurrent.*;
 
 @Service
 public class DeferredRegistry {
+
+    private static final Logger logger = LoggerFactory.getLogger(DeferredRegistry.class);
 
     private final ConcurrentMap<String, DeferredResult<Map<String, Object>>> pending = new ConcurrentHashMap<>();
 
@@ -42,5 +48,11 @@ public class DeferredRegistry {
         }
         deferred.setResult(payload);
         return true;
+    }
+
+    @Async
+    public void test() throws InterruptedException {
+        logger.info("Test Async");
+        Thread.sleep(10000);
     }
 }

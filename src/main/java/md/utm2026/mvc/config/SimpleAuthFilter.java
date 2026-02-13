@@ -11,7 +11,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-@Component
+//@Component
 public class SimpleAuthFilter extends OncePerRequestFilter {
 
     private final String apiKey;
