@@ -3,6 +3,8 @@ package md.utm2026.mvc.web;
 import jakarta.validation.Valid;
 import md.utm2026.mvc.exception.UserNotFoundException;
 import md.utm2026.mvc.service.dto.RequestUserDto;
+import md.utm2026.mvc.service.dto.UserId;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.slf4j.Logger;
@@ -19,6 +21,12 @@ public class UserResource {
 
     private static final Logger logger = LoggerFactory.getLogger(UserResource.class);
 
+    private final ConversionService conversionService;
+
+    public UserResource(ConversionService conversionService) {
+        this.conversionService = conversionService;
+    }
+
     @PostMapping
     public ResponseEntity<RequestUserDto> create(@Valid @RequestBody RequestUserDto requestUserDto) throws Exception {
         return ResponseEntity
@@ -32,9 +40,14 @@ public class UserResource {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<RequestUserDto> getUserById(@PathVariable Long userId) {
-        if (userId != 1) {
-            throw new UserNotFoundException(userId);
+    public ResponseEntity<RequestUserDto> getUserById(@PathVariable UserId userId) {
+        logger.info("UserId convert implicit de Spring : {}",  userId);
+        UserId convertManual = conversionService.convert(userId, UserId.class);
+
+        logger.info("UserId convertManual : {}",  convertManual);
+
+        if (userId.value() != 1) {
+            throw new UserNotFoundException(userId.value());
         }
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-TEST", "Test123");
